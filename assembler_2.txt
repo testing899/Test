@@ -1,0 +1,58 @@
+find_primes_with_eratosthenes_sieve:
+	enter 8, 1
+	mov [ebp-4], eax
+		
+	add eax, ebx
+	inc eax
+	mov [ebp-8], eax
+	
+	;вычеркиваем составные числа
+	cld
+	mov edx, 2 ;p = 2
+	mov ecx, 2 ;множитель с = 2
+	.strike_out_cycle:
+		;x = c*p
+		mov eax, edx
+		push edx
+		mul ecx
+		pop edx
+		
+		cmp eax, ebx
+		jbe .strike_out_number
+		jmp .increase_p
+		
+		.strike_out_number:
+			mov edi, [ebp-4]
+			add edi, eax
+			mov byte [edi], 0
+			inc ecx ;c = c + 1
+			jmp .strike_out_cycle
+			
+		.increase_p:
+			mov esi, [ebp-4]
+			add esi, edx
+			inc esi
+			
+			mov ecx, edx
+			inc ecx
+			.check_current_number:
+				mov eax, ecx
+				mul eax
+				cmp eax, ebx
+				ja .return
+			
+				lodsb
+				inc ecx
+				cmp al, 0
+				jne .new_p_found
+				jmp .check_current_number
+			
+				.new_p_found:
+					mov edx, ecx
+					dec edx
+					mov ecx, 2
+					jmp .strike_out_cycle			
+	
+	.return:
+		leave
+		ret
