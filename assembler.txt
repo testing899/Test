@@ -1,0 +1,42 @@
+print_primes:
+	enter 12, 1
+	mov [ebp-4], eax
+	mov [ebp-8], ebx
+	
+	push str_print_primes_label
+	call _printf
+	add esp, 4
+	
+	cld
+	mov esi, [ebp-4]
+	mov edx, esi
+	add edx, [ebp-8]
+	inc edx
+	
+	mov [ebp-12], edx
+	mov ecx, 0
+	.print_cycle:
+		lodsb
+		cmp al, 0
+		jne .print
+		jmp .check_finish
+		.print:
+			push esi
+			push ecx
+			push str_prime ;см. string_constants.asm
+			call _printf
+			add esp, 4
+			pop ecx
+			pop esi
+			mov edx, [ebp-12]
+		.check_finish:
+			inc ecx
+			cmp esi, edx
+			jb .print_cycle
+			
+	push str_cr_lf
+	call _printf
+	add esp, 4
+			
+	leave
+	ret
